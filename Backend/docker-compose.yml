@@ -1,0 +1,36 @@
+version: '3.4'
+
+volumes: 
+  datafiles: 
+
+services:
+
+  # SQLServer
+  db:
+    container_name: postgreSQL
+    image: postgres:10
+    environment: 
+      POSTGRES_DB: "GameLoanManager"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "root" 
+    ports:
+      - "5433:5432"
+    networks:
+      - app-connect
+
+  apiLGM:
+    image: gameloan/manager
+    build:
+      context: .  
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    ports:
+        - "8000:80"
+    restart: always 
+    networks:
+      - app-connect
+  
+networks:
+  app-connect:
+      driver: bridge
