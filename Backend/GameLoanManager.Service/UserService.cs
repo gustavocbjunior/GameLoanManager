@@ -27,22 +27,18 @@ namespace GameLoanManager.Service
             var result = new ResultViewModel
             {
                 Success = false,
-                Message = "Login ou senha inválido.",
-                Data = loginVM
+                Message = "Login ou senha inválido(s)."
             };
 
-            if (loginVM != null && !string.IsNullOrWhiteSpace(loginVM.Login))
+            user = await _repository.FindForAuthentication(loginVM.Login, loginVM.Password);
+
+            if (user != null)
             {
-                user = await _repository.FindForAuthentication(loginVM.Login, loginVM.Password);
+                var token = _tokenService.GenerateToken(user);
 
-                if (user != null)
-                {
-                    var token = _tokenService.GenerateToken(user);
-
-                    result.Success = true;
-                    result.Message = "Usuário autenticado.";
-                    result.Data = token;
-                }
+                result.Success = true;
+                result.Message = "Usuário autenticado.";
+                result.Data = token;
             }
 
             return result;

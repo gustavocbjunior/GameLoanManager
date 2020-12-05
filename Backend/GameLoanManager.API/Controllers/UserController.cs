@@ -23,28 +23,23 @@ namespace GameLoanManager.API.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route("Authentication")]
-        public async Task<Object> Login([FromBody] LoginViewModel login)
+        public async Task<Object> Login([FromBody] LoginViewModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            if (login == null)
-            {
-                return BadRequest(ModelState);
-            }
+            if (model.Invalid)
+                return BadRequest(new ResultViewModel
+                {
+                    Success = false,
+                    Message = "Login ou senha inválidos"
+                });
 
             try
             {
-                var result = await _service.Authentication(login);
-                if (result != null)
-                {
+                var result = await _service.Authentication(model);
+
+                if (result.Success)
                     return result;
-                }
                 else
-                {
-                    return NotFound();
-                }
+                    return NotFound(result);
             }
             catch (Exception e)
             {
@@ -56,7 +51,6 @@ namespace GameLoanManager.API.Controllers
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] UserCreateViewModel model)
         {
-            //model.Validate();
             if (model.Invalid)
                 return BadRequest(new ResultViewModel
                 {
@@ -81,7 +75,6 @@ namespace GameLoanManager.API.Controllers
         [HttpPut]
         public async Task<ActionResult> Put([FromBody] UserUpdateViewModel model)
         {
-            model.Validate();
             if (model.Invalid)
                 return BadRequest(new ResultViewModel
                 {

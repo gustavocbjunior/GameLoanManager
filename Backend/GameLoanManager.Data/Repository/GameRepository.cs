@@ -29,5 +29,21 @@ namespace GameLoanManager.Data.Repository
 
             return await q.ToListAsync();
         }
+
+        public async Task<Game> GetAvailable(long id)
+        {
+            IQueryable<Game> q = _dataset.Include(u => u.User)
+                                         .Where(g => g.Id == id && g.Available);
+
+            return await q.FirstOrDefaultAsync();
+        }
+
+        public async Task<IEnumerable<Game>> GetAvailables()
+        {
+            IQueryable<Game> q = _dataset.Include(u => u.User)
+                                         .Where(g => g.Available);
+
+            return await q.ToListAsync();
+        }
     }
 }

@@ -10,6 +10,8 @@ namespace GameLoanManager.Domain.Interfaces
     {
         Task<GameViewModel> GetByIdWithRelationships(long id);
         Task<IEnumerable<GameViewModel>> GetAllWithRelationships();
+        Task<GameViewModel> GetAvailable(long id);
+        Task<IEnumerable<GameViewModel>> GetAvailables();
         Task<GameViewModel> Get(long id);
         Task<IEnumerable<GameViewModel>> GetAll();
         Task<ResultViewModel> Post(GameCreateViewModel user);

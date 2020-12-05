@@ -8,5 +8,7 @@ namespace GameLoanManager.Domain.Interfaces
     {
         Task<Game> GetByIdWithRelationships(long id);
         Task<IEnumerable<Game>> GetAllWithRelationships();
+        Task<Game> GetAvailable(long id);
+        Task<IEnumerable<Game>> GetAvailables();
     }
 }

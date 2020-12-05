@@ -83,7 +83,6 @@ namespace GameLoanManager.API.Controllers
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] GameCreateViewModel model)
         {
-            model.Validate();
             if (model.Invalid)
                 return BadRequest(new ResultViewModel
                 {
@@ -108,7 +107,6 @@ namespace GameLoanManager.API.Controllers
         [HttpPut]
         public async Task<ActionResult> Put([FromBody] GameUpdateViewModel model)
         {
-            model.Validate();
             if (model.Invalid)
                 return BadRequest(new ResultViewModel
                 {

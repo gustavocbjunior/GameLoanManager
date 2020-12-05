@@ -11,12 +11,14 @@ namespace GameLoanManager.Service
     public class LoanedGameService : ILoanedGameService
     {
         private ILoanedGameRepository _repository;
+        private IGameRepository _repositoryGame;
         private readonly IMapper _mapper;
 
-        public LoanedGameService(ILoanedGameRepository repository, IMapper mapper)
+        public LoanedGameService(ILoanedGameRepository repository, IMapper mapper, IGameRepository repositoryGame)
         {
             _repository = repository;
             _mapper = mapper;
+            _repositoryGame = repositoryGame;
         }
 
         public async Task<ResultViewModel> Delete(long id)
@@ -76,19 +78,45 @@ namespace GameLoanManager.Service
         public async Task<ResultViewModel> Post(LoanedGameCreateViewModel loanedGame)
         {
             var entity = _mapper.Map<LoanedGame>(loanedGame);
-            var result = await _repository.InsertAsync(entity);
 
-            return new ResultViewModel
+            entity.Game = await _repositoryGame.GetByIdAsync(entity.IdGame);
+
+            var result = new ResultViewModel
             {
-                Success = true,
-                Message = "empréstimo de jogo criado.",
-                Data = _mapper.Map<LoanedGameViewModel>(result)
+                Success = false,
+                Message = "Não foi possível criar o empréstimo."
             };
+
+            if (!entity.IsValid())
+            {
+                result.Message += " Jogo indisponivel";
+            }
+            else
+            {
+                var insert = await _repository.InsertAsync(entity);
+
+                entity.Game.Available = false;
+                await _repositoryGame.UpdateAsync(entity.Game);
+
+                result.Success = true;
+                result.Message = "empréstimo de jogo criado.";
+                result.Data = _mapper.Map<LoanedGameViewModel>(insert);
+            }
+
+            return result;
         }
 
         public async Task<ResultViewModel> Put(LoanedGameUpdateViewModel loanedGame)
         {
             var entity = _mapper.Map<LoanedGame>(loanedGame);
+            var entityDB = await _repository.GetByIdWithRelationshipsAsync(loanedGame.Id);
+
+            if (loanedGame.Returned && !entityDB.Returned)
+            {
+                entityDB.Game.Available = true;
+                await _repositoryGame.UpdateAsync(entityDB.Game);
+            }
+
             var result = await _repository.UpdateAsync(entity);
 
             return new ResultViewModel

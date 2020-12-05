@@ -11,5 +11,13 @@ namespace GameLoanManager.Domain.Entities
         public virtual Game Game { get; set; }
 
         public bool Returned { get; set; }
+
+        public bool IsValid()
+        {
+            if (Game != null && Game.Available)
+                return true;
+            else
+                return false;
+        }
     }
 }

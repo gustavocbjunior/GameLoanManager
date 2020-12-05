@@ -4,15 +4,16 @@ using GameLoanManager.Domain.Enums;
 
 namespace GameLoanManager.Domain.ViewModels.Game
 {
-    public class GameCreateViewModel :  Notifiable, IValidatable
+    public class GameCreateViewModel : Notifiable
     {
-        public string Name { get; set; }
-        public EGameType Type { get; set; }
-        public string Description { get; set; }
-        public long IdOwner { get; set; }
-
-        public void Validate()
+        public GameCreateViewModel(string name, EGameType type, string description, long idOwner)
         {
+            this.Name = name;
+            this.Type = type;
+            this.Description = description;
+            this.IdOwner = idOwner;
+            this.Available = true;
+
             AddNotifications(
                 new Contract()
                     .Requires()
@@ -22,5 +23,10 @@ namespace GameLoanManager.Domain.ViewModels.Game
                     .IsGreaterThan(IdOwner, 0, "IdOwner", "O ID do usuário a qual o jogo pertence é obrigatório")
             );
         }
+        public string Name { get; private set; }
+        public EGameType Type { get; private set; }
+        public string Description { get; private set; }
+        public long IdOwner { get; private set; }
+        public bool Available { get; private set; }
     }
 }

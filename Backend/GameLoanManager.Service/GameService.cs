@@ -55,6 +55,18 @@ namespace GameLoanManager.Service
             return _mapper.Map<GameViewModel>(entity) ?? new GameViewModel();
         }
 
+        public async Task<GameViewModel> GetAvailable(long id)
+        {
+            var entity = await _repository.GetAvailable(id);
+            return _mapper.Map<GameViewModel>(entity) ?? new GameViewModel();
+        }
+
+        public async Task<IEnumerable<GameViewModel>> GetAvailables()
+        {
+            var list = await _repository.GetAvailables();
+            return _mapper.Map<IEnumerable<GameViewModel>>(list);
+        }
+
         public async Task<ResultViewModel> Post(GameCreateViewModel game)
         {
             var entity = _mapper.Map<Game>(game);

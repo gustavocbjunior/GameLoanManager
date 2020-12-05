@@ -19,6 +19,8 @@ namespace GameLoanManager.Domain.ViewModels.LoanedGame
                 new Contract()
                     .Requires()
                     .IsGreaterThan(Id, 0, "Id Loaned Game", "O ID do empréstimo do jogo é obrigatório")
+                    .IsGreaterThan(IdUser, 0, "IdUser", "O ID do usuário é obrigatório")
+                    .IsGreaterThan(IdGame, 0, "IdGame", "O ID do jogo é obrigatório")
             );
         }
     }

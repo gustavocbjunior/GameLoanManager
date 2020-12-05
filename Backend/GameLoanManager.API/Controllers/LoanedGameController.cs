@@ -98,7 +98,6 @@ namespace GameLoanManager.API.Controllers
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] LoanedGameCreateViewModel model)
         {
-            model.Validate();
             if (model.Invalid)
                 return BadRequest(new ResultViewModel
                 {

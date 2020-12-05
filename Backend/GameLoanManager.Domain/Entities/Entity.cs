@@ -14,8 +14,6 @@ namespace GameLoanManager.Domain.Entities
             get { return _createAt; }
             set { _createAt = value.Equals(DateTime.MinValue) ? DateTime.UtcNow : value; }
         }
-
-        private DateTime? _updateAt;
         public DateTime? UpdateAt { get; set; }
     }
 }

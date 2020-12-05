@@ -5,19 +5,17 @@ using GameLoanManager.Domain.ValueObjects;
 
 namespace GameLoanManager.Domain.ViewModels.User
 {
-    public class UserUpdateViewModel : Notifiable, IValidatable
+    public class UserUpdateViewModel : Notifiable
     {
-        public long Id { get; set; }
-        public string Login { get; set; }
-        public string Password { get; set; }
-        public string Name { get; set; }
-        public Email Email { get; set; }
-        public string Phone { get; set; }
-
-        public DateTime UpdateAt { get { return DateTime.UtcNow; } }
-
-        public void Validate()
+        public UserUpdateViewModel(long id, string login, string password, string name, Email email, string phone)
         {
+            this.Id = id;
+            this.Login = login;
+            this.Password = password;
+            this.Name = name;
+            this.Email = email;
+            this.Phone = phone;
+
             AddNotifications(
                 new Contract()
                     .Requires()
@@ -30,5 +28,13 @@ namespace GameLoanManager.Domain.ViewModels.User
             );
             AddNotifications(Email.Notifications);
         }
+        public long Id { get; private set; }
+        public string Login { get; private set; }
+        public string Password { get; private set; }
+        public string Name { get; private set; }
+        public Email Email { get; private set; }
+        public string Phone { get; private set; }
+
+        public DateTime UpdateAt { get { return DateTime.UtcNow; } }
     }
 }

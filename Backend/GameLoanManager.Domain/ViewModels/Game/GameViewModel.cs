@@ -15,5 +15,6 @@ namespace GameLoanManager.Domain.ViewModels.Game
         public string Description { get; set; }
         public long IdOwner { get; set; }
         public string Owner { get; set; }
+        public bool Available { get; set; }
     }
 }

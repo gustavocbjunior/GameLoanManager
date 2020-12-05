@@ -3,14 +3,13 @@ using Flunt.Validations;
 
 namespace GameLoanManager.Domain.ViewModels.LoanedGame
 {
-    public class LoanedGameCreateViewModel : Notifiable, IValidatable
+    public class LoanedGameCreateViewModel : Notifiable
     {
-        public long IdUser { get; set; }
-        public long IdGame { get; set; }
-        public bool Returned { get { return false; } }
-
-        public void Validate()
+        public LoanedGameCreateViewModel(long idUser, long idGame)
         {
+            this.IdUser = idUser;
+            this.IdGame = idGame;
+
             AddNotifications(
                 new Contract()
                     .Requires()
@@ -18,5 +17,8 @@ namespace GameLoanManager.Domain.ViewModels.LoanedGame
                     .IsGreaterThan(IdGame, 0, "IdGame", "O ID do jogo é obrigatório")
             );
         }
+        public long IdUser { get; private set; }
+        public long IdGame { get; private set; }
+        public bool Returned { get { return false; } }
     }
 }
