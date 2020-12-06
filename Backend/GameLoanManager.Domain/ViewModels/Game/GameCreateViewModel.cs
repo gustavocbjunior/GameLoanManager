@@ -19,7 +19,7 @@ namespace GameLoanManager.Domain.ViewModels.Game
                     .Requires()
                     .HasMaxLen(Name, 60, "Name", "O nome deve conter até 60 caracteres")
                     .HasMinLen(Name, 3, "Name", "O nome deve conter pelo menos 3 caracteres")
-                    .HasMaxLen(Description, 60, "Description", "A descriçao deve conter até 200 caracteres")
+                    .HasMaxLen(Description, 200, "Description", "A descriçao deve conter até 200 caracteres")
                     .IsGreaterThan(IdOwner, 0, "IdOwner", "O ID do usuário a qual o jogo pertence é obrigatório")
             );
         }
