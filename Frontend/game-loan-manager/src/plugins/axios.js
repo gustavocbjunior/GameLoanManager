@@ -18,7 +18,9 @@ Vue.use({
         })
 
         const user = JSON.parse(localStorage.getItem('user'));
+        //console.log(user);
         if(user) {
+            //console.log(user.accessToken);
             Vue.prototype.$http.defaults.headers.common['Authorization'] = 'Bearer ' + user.accessToken
         }
     }

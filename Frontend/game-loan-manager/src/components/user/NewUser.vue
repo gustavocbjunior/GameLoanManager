@@ -1,5 +1,8 @@
 <template>
   <v-layout row wrap align-center justify-center>
+    <v-alert v-model="alert" dismissible :type="alertType" class="alertMessage">
+      {{ alertMessage }}
+    </v-alert>
     <v-flex class="pl-3 pr-3 pb-3" xs12 md10 lg8>
       <v-card flat class="pa-3">
         <v-card-title primary-title>
@@ -37,7 +40,7 @@
             prepend-icon="mail"
             name="email"
             label="E-mail"
-            v-model="user.email"
+            v-model="user.email.address"
             :rules="[rules.required, rules.email]"
             clearable
           ></v-text-field>
@@ -50,7 +53,7 @@
             mask="(##) ##### - ####"
           ></v-text-field>
           <v-card-actions>
-            <v-btn primary large block @click.prevent="register"
+            <v-btn primary large block @click.prevent="register" color="success"
               >Registrar</v-btn
             >
             <v-btn primary large block @click="clear">Limpar</v-btn>
@@ -69,14 +72,18 @@ export default {
         login: "",
         password: "",
         name: "",
-        email: "",
+        email: {
+          address: "",
+        },
         phone: "",
       },
       defaultUser: {
         login: "",
         password: "",
         name: "",
-        email: "",
+        email: {
+          address: "",
+        },
         phone: "",
       },
       rules: {
@@ -89,15 +96,40 @@ export default {
         },
       },
       show1: false,
+      alert: false,
+      alertType: "success",
+      alertMessage: "",
     };
   },
   methods: {
     register() {
-      return this.$store.dispatch("userRegister", this.user);
+      this.$store
+        .dispatch("userRegister", this.user)
+        .then((response) => {
+          console.log(response.message);
+          var message = response.message;
+          this.showAlert("success", message);
+
+          this.clear();
+        })
+        .catch((err) => {
+          if (err.status == 401) {
+            this.$store.dispatch("logout");
+            this.showAlert("error", "Acesso expirado, faça login novamente.");
+          } else {
+            console.log(err);
+            this.showAlert("error", err.data.message);
+          }
+        });
     },
     clear() {
       this.user = Object.assign({}, this.defaultUser);
       //this.user.name = '';
+    },
+    showAlert(type, message) {
+      this.alert = true;
+      this.alertType = type;
+      this.alertMessage = message;
     },
   },
 };

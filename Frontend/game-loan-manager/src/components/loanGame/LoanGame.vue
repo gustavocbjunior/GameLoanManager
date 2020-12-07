@@ -28,27 +28,32 @@
                 </v-flex>
                 <v-flex xs12 sm6 md4>
                   <v-text-field
-                    v-model="editedItem.name"
-                    label="Nome"
+                    v-model="editedItem.idUser"
+                    label="Id Usuário"
                   ></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
-                  <v-select
-                    :items="gameTypes"
-                    label="Tipo"
-                    v-model="editedItem.type"
-                  ></v-select>
+                  <v-text-field
+                    v-model="editedItem.user"
+                    label="Usuário"
+                  ></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
                   <v-text-field
-                    v-model="editedItem.description"
-                    label="Descrição"
+                    v-model="editedItem.idGame"
+                    label="Id Jogo"
+                  ></v-text-field>
+                </v-flex>
+                <v-flex xs12 sm6 md4>
+                  <v-text-field
+                    v-model="editedItem.game"
+                    label="Jogo"
                   ></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
                   <v-layout row wrap class="dark--text">
-                    <v-flex xs6>Disponível</v-flex>
-                    <v-checkbox v-model="editedItem.available"></v-checkbox>
+                    <v-flex xs6>Devolvido</v-flex>
+                    <v-checkbox v-model="editedItem.returned"></v-checkbox>
                   </v-layout>
                 </v-flex>
               </v-layout>
@@ -63,15 +68,16 @@
         </v-card>
       </v-dialog>
     </v-toolbar>
-    <v-data-table :headers="headers" :items="jogos" class="elevation-1">
+    <v-data-table :headers="headers" :items="loanGames" class="elevation-1">
       <template slot="items" slot-scope="props">
         <td>{{ props.item.id }}</td>
-        <td class="text-xs-left">{{ props.item.name }}</td>
-        <td class="text-xs-right">{{ props.item.type }}</td>
-        <td class="text-xs-right">{{ props.item.description }}</td>
+        <td class="text-xs-left">{{ props.item.idUser }}</td>
+        <td class="text-xs-left">{{ props.item.user }}</td>
+        <td class="text-xs-right">{{ props.item.idGame }}</td>
+        <td class="text-xs-left">{{ props.item.game }}</td>
         <td class="text-xs-right">
           <v-checkbox
-            v-model="props.item.available"
+            v-model="props.item.returned"
             :disabled="true"
             class="marginCheckBox"
           ></v-checkbox>
@@ -99,41 +105,52 @@ export default {
     alert: false,
     alertType: "success",
     alertMessage: "",
-    gameTypes: ["DVD", "Tabuleiro"],
     headers: [
       { text: "Id", value: "id" },
+      { text: "Id Usuário", value: "idUser" },
       {
-        text: "Nome",
+        text: "Usuário",
         align: "left",
         sortable: false,
-        value: "name",
+        value: "user",
       },
-      { text: "Tipo", value: "type" },
-      { text: "Descrição", value: "description" },
-      { text: "Disponível", value: "available" },
+      { text: "Id Jogo", value: "idGame" },
+      {
+        text: "Jogo",
+        align: "left",
+        sortable: false,
+        value: "game",
+      },
+      { text: "Devolvido", value: "returned" },
       { text: "Ações", value: "name", sortable: false },
     ],
-    jogos: [],
+    loanGames: [],
     editedIndex: -1,
     editedItem: {
       id: null,
-      name: "",
-      type: "",
-      description: "",
-      available: false,
+      idUser: null,
+      user: "",
+      idGame: null,
+      game: "",
+      gameType: "",
+      returned: false,
     },
     defaultItem: {
       id: null,
-      name: "",
-      type: "",
-      description: "",
-      available: true,
+      idUser: null,
+      user: "",
+      idGame: null,
+      game: "",
+      gameType: "",
+      returned: false,
     },
   }),
 
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? "Novo Jogo" : "Modificar Jogo";
+      return this.editedIndex === -1
+        ? "Novo Empréstimo Jogo"
+        : "Modificar Empréstimo Jogo";
     },
   },
 
@@ -148,11 +165,11 @@ export default {
   },
 
   methods: {
-    ...mapActions(["getAPIGamers"]),
+    ...mapActions(["getAPILoanGamers"]),
     initialize() {
-      this.getAPIGamers()
+      this.getAPILoanGamers()
         .then((response) => {
-          this.jogos = response;
+          this.loanGames = response;
         })
         .catch((err) => {
           if (err.status == 401) {
@@ -171,15 +188,15 @@ export default {
     },
 
     editItem(item) {
-      this.editedIndex = this.jogos.indexOf(item);
+      this.editedIndex = this.loanGames.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
     },
 
     deleteItem(item) {
-      const index = this.jogos.indexOf(item);
+      const index = this.loanGames.indexOf(item);
       confirm("Are you sure you want to delete this item?") &&
-        this.jogos.splice(index, 1);
+        this.loanGames.splice(index, 1);
     },
 
     close() {
@@ -192,14 +209,14 @@ export default {
 
     save() {
       if (this.editedIndex > -1) {
-        Object.assign(this.jogos[this.editedIndex], this.editedItem);
+        Object.assign(this.loanGames[this.editedIndex], this.editedItem);
         this.$store
-          .dispatch("gameUpdate", this.editedItem)
+          .dispatch("loanGameUpdate", this.editedItem)
           .then(() => {
+            //this.loanGames.push(this.editedItem);
             this.initialize();
-            this.jogos.push(this.editedItem);
 
-            this.showAlert("success", "Jogo modificado.");
+            this.showAlert("success", "Empréstimo de jogo modificado.");
           })
           .catch((error) => {
             // eslint-disable-next-line
@@ -208,12 +225,12 @@ export default {
           });
       } else {
         this.$store
-          .dispatch("gameRegister", this.editedItem)
+          .dispatch("loanGameRegister", this.editedItem)
           .then(() => {
+            //this.loanGames.push(this.editedItem);
             this.initialize();
-            this.jogos.push(this.editedItem);
 
-            this.showAlert("success", "Jogo registrado.");
+            this.showAlert("success", "Empréstimo de jogo registrado.");
           })
           .catch((error) => {
             // eslint-disable-next-line

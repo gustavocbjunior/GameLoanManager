@@ -21,7 +21,6 @@
           ></v-text-field>
           <v-card-actions>
             <v-btn primary large block @click.prevent="login">Login</v-btn>
-            <v-btn primary large block to="/user/new">Novo Usuário</v-btn>
           </v-card-actions>
         </v-form>
       </v-card>
