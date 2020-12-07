@@ -45,5 +45,12 @@ namespace GameLoanManager.Data.Repository
 
             return await q.ToListAsync();
         }
+
+        public async Task<IEnumerable<Game>> GetByIdUser(long idUser)
+        {
+            IQueryable<Game> q = _dataset.Where(g => g.IdUser == idUser);
+
+            return await q.ToListAsync();
+        }
     }
 }

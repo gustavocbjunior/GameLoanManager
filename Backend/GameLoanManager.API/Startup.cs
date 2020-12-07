@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -39,22 +40,25 @@ namespace GameLoanManager.API
             }
             );
 
+            services.AddCors(c =>
+            {
+                c.AddDefaultPolicy(options => options.AllowAnyOrigin()
+                                                     .AllowAnyHeader()
+                                                     .AllowAnyMethod());
+            });
+
             services.AddControllers().AddNewtonsoftJson(o =>
             {
                 o.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
                 o.SerializerSettings.Converters.Add(new StringEnumConverter());
             }
             );
-            /*.AddJsonOptions(options =>
-            {
-                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-                options.JsonSerializerOptions.IgnoreNullValues = true;
-            });*/
 
             ServicesConfiguration.ConfigureDependencies(services);
             RepositoriesConfiguration.ConfigureDependencies(services);
 
             services.AddSingleton(MapperConfiguration.Configure());
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             var tokenConfigurations = new TokenConfigurations();
             new ConfigureFromConfigurationOptions<TokenConfigurations>(Configuration.GetSection("TokenConfigurations"))
@@ -145,10 +149,16 @@ namespace GameLoanManager.API
 
             app.UseRouting();
 
-            app.UseCors(x => x
-                .AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader());
+            app.UseCors();
+
+            app.Use(async (context, next) =>
+            {
+                // Add Header
+                context.Response.Headers["Access-Control-Allow-Origin"] = "*";
+
+                // Call next middleware
+                await next.Invoke();
+            });
 
             app.UseAuthentication();
             app.UseAuthorization();

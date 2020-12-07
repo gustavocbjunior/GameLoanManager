@@ -44,6 +44,12 @@ namespace GameLoanManager.Service
             return result;
         }
 
+        public UserViewModel GetAuthenticatedUser()
+        {
+            
+            return new UserViewModel();
+        }
+
         public async Task<ResultViewModel> Delete(long id)
         {
             var result = await _repository.DeleteAsync(id);
@@ -59,6 +65,12 @@ namespace GameLoanManager.Service
         public async Task<UserViewModel> Get(long id)
         {
             var entity = await _repository.GetByIdAsync(id);
+            return _mapper.Map<UserViewModel>(entity) ?? new UserViewModel();
+        }
+
+        public async Task<UserViewModel> GetByName(string name)
+        {
+            var entity = await _repository.GetByIdAsync(1);
             return _mapper.Map<UserViewModel>(entity) ?? new UserViewModel();
         }
 

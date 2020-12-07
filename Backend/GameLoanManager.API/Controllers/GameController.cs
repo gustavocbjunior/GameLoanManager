@@ -5,6 +5,7 @@ using GameLoanManager.Domain.Interfaces;
 using GameLoanManager.Domain.ViewModels;
 using GameLoanManager.Domain.ViewModels.Game;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GameLoanManager.API.Controllers
@@ -14,10 +15,14 @@ namespace GameLoanManager.API.Controllers
     public class GameController : ControllerBase
     {
         private IGameService _service;
+        private IUserService _serviceUser;
+        private readonly IHttpContextAccessor _accessor;
 
-        public GameController(IGameService service)
+        public GameController(IGameService service, IUserService serviceUser, IHttpContextAccessor accessor)
         {
             _service = service;
+            _serviceUser = serviceUser;
+            _accessor = accessor;
         }
 
         [Authorize("Authorization")]
@@ -78,11 +83,38 @@ namespace GameLoanManager.API.Controllers
                 return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
             }
         }
-        
+
+        [Authorize("Authorization")]
+        [HttpGet]
+        [Route("owner/{idUser}")]
+        /// <summary>
+        /// all a user's games
+        /// </summary>
+        /// <param name="idUser"></param>
+        /// <returns></returns>
+        public async Task<ActionResult> GetByIdUser(long idUser)
+        {
+            try
+            {
+                return Ok(await _service.GetByIdUser(idUser));
+            }
+            catch (ArgumentException e)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
+            }
+        }
+
         [Authorize("Authorization")]
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] GameCreateViewModel model)
         {
+            if (model.IdOwner == 0)
+            {
+                string authenticatedUserName = _accessor.HttpContext.User.Identity.Name;
+                var user = await _serviceUser.GetByName(authenticatedUserName);
+                model.IdOwner = user.Id;
+            }
+
             if (model.Invalid)
                 return BadRequest(new ResultViewModel
                 {
@@ -107,6 +139,13 @@ namespace GameLoanManager.API.Controllers
         [HttpPut]
         public async Task<ActionResult> Put([FromBody] GameUpdateViewModel model)
         {
+            if (model.IdOwner == 0)
+            {
+                string authenticatedUserName = _accessor.HttpContext.User.Identity.Name;
+                var user = await _serviceUser.GetByName(authenticatedUserName);
+                model.IdOwner = user.Id;
+            }
+            
             if (model.Invalid)
                 return BadRequest(new ResultViewModel
                 {

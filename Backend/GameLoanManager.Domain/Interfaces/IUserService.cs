@@ -9,8 +9,10 @@ namespace GameLoanManager.Domain.Interfaces
     {
         Task<ResultViewModel> Authentication(LoginViewModel login);
         Task<UserViewModel> Get(long id);
+        Task<UserViewModel> GetByName(string name);
         Task<UserViewModel> GetMyGames(long id);
         Task<IEnumerable<UserViewModel>> GetAll();
+        UserViewModel GetAuthenticatedUser();
         Task<ResultViewModel> Post(UserCreateViewModel user);
         Task<ResultViewModel> Put(UserUpdateViewModel user);
         Task<ResultViewModel> Delete(long id);

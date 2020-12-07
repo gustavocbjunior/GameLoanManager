@@ -67,6 +67,12 @@ namespace GameLoanManager.Service
             return _mapper.Map<IEnumerable<GameViewModel>>(list);
         }
 
+        public async Task<IEnumerable<GameViewModel>> GetByIdUser(long idUser)
+        {
+            var list = await _repository.GetByIdUser(idUser);
+            return _mapper.Map<IEnumerable<GameViewModel>>(list);
+        }
+
         public async Task<ResultViewModel> Post(GameCreateViewModel game)
         {
             var entity = _mapper.Map<Game>(game);
@@ -92,5 +98,6 @@ namespace GameLoanManager.Service
                 Data = _mapper.Map<GameViewModel>(result)
             };
         }
+
     }
 }

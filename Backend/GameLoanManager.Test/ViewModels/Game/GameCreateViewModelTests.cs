@@ -34,19 +34,6 @@ namespace GameLoanManager.Test.ViewModels.Game
         }
 
         [TestMethod]
-        public void ShouldReturnErrorWhenIdOwnerIsInvalid()
-        {
-            var game = new GameCreateViewModel (
-                "War",
-                EGameType.Tabuleiro,
-                "Descrição do jogo",
-                0
-            );
-
-            Assert.IsTrue(game.Invalid);
-        }
-
-        [TestMethod]
         public void ShouldReturnSuccessWhenGameCreateViewModelIsValid()
         {
             var game = new GameCreateViewModel (
