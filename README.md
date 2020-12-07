@@ -9,4 +9,4 @@
 
 # Rodar o Docker para frontend Vue.JS
 - docker build -t gameloanmanager/vuejs-app .
-- docker run -it -p 8080:80 --rm --name gameloan-manager-app-1 gameloanmanager/vuejs-app
+- docker run -it -p 81:80 --rm --name gameloan-manager-app-1 gameloanmanager/vuejs-app

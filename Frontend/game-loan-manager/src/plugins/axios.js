@@ -3,7 +3,16 @@ import axios from 'axios'
 
 Vue.use({
     install(Vue) {
-        var hostAPI = 'https://localhost:5001';
+        var hostAPI;
+
+        //desenvolvimento
+        if (process.env.NODE_ENV !== "production") {
+            hostAPI = "http://localhost:5000";
+        }
+        //produção
+        else {
+            hostAPI = "http://localhost:8000";
+        }
         
         axios.defaults.baseURL = hostAPI;
         axios.defaults.headers["Access-Control-Allow-Origin"] = "*";
