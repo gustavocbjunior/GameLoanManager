@@ -26,29 +26,25 @@
                     :disabled="true"
                   ></v-text-field>
                 </v-flex>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field
-                    v-model="editedItem.idUser"
-                    label="Id Usuário"
-                  ></v-text-field>
-                </v-flex>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field
-                    v-model="editedItem.user"
+                <v-flex xs12 sm12 md12>
+                  <v-autocomplete
+                  v-model="editedItem.idUser"
+                    :items="users"
+                    color="white"
+                    item-text="name"
+                    item-value="id"
                     label="Usuário"
-                  ></v-text-field>
+                ></v-autocomplete>
                 </v-flex>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field
-                    v-model="editedItem.idGame"
-                    label="Id Jogo"
-                  ></v-text-field>
-                </v-flex>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field
-                    v-model="editedItem.game"
+                <v-flex xs12 sm12 md12>
+                  <v-autocomplete
+                  v-model="editedItem.idGame"
+                    :items="gamers"
+                    color="white"
+                    item-text="name"
+                    item-value="id"
                     label="Jogo"
-                  ></v-text-field>
+                ></v-autocomplete>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
                   <v-layout row wrap class="dark--text">
@@ -144,6 +140,8 @@ export default {
       gameType: "",
       returned: false,
     },
+    users: [],
+    gamers: []
   }),
 
   computed: {
@@ -165,7 +163,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(["getAPILoanGamers"]),
+    ...mapActions(["getAPILoanGamers", "getAPIGamers", "getUsers"]),
     initialize() {
       this.getAPILoanGamers()
         .then((response) => {
@@ -176,8 +174,33 @@ export default {
             this.$store.dispatch("logout");
             this.showAlert("error", "Acesso expirado, faça login novamente.");
           } else {
-            this.showAlert("error", err.data.message);
+            var message;
+            try {
+              message = err.data.message;
+            } catch {
+              message = "Não foi possível obter os empréstimos dos jogos.";
+            }
+
+            this.showAlert("error", message);
           }
+        });
+
+        this.getUsers()
+        .then((response) => {
+          this.users = response;
+        })
+        .catch((err) => {
+          // eslint-disable-next-line
+          console.log(err);
+        });
+
+        this.getAPIGamers()
+        .then((response) => {
+          this.gamers = response;
+        })
+        .catch((err) => {
+          // eslint-disable-next-line
+          console.log(err);
         });
     },
 
@@ -210,8 +233,16 @@ export default {
     save() {
       if (this.editedIndex > -1) {
         Object.assign(this.loanGames[this.editedIndex], this.editedItem);
+        
+        var loanGame = {
+          id: this.editedItem.id,
+          idUser: this.editedItem.idUser,
+          idGame: this.editedItem.idGame,
+          returned: this.editedItem.returned,
+        };
+
         this.$store
-          .dispatch("loanGameUpdate", this.editedItem)
+          .dispatch("loanGameUpdate", loanGame)
           .then(() => {
             //this.loanGames.push(this.editedItem);
             this.initialize();
@@ -221,11 +252,18 @@ export default {
           .catch((error) => {
             // eslint-disable-next-line
             //console.log(error.data.message);
-            this.showAlert("error", error.data.message);
+            var message = error.data.message
+              ? error.data.message
+              : "Não foi possível alterar o empréstimo do jogo.";
+            this.showAlert("error", message);
           });
       } else {
+        var lgRegister = {
+          idGame: this.editedItem.idGame,
+          idUser: this.editedItem.idUser,
+        };
         this.$store
-          .dispatch("loanGameRegister", this.editedItem)
+          .dispatch("loanGameRegister", lgRegister)
           .then(() => {
             //this.loanGames.push(this.editedItem);
             this.initialize();
@@ -235,7 +273,10 @@ export default {
           .catch((error) => {
             // eslint-disable-next-line
             //console.log(error.data.message);
-            this.showAlert("error", error.data.message);
+            var message = error.data.message
+              ? error.data.message
+              : "Não foi possível alterar o empréstimo do jogo.";
+            this.showAlert("error", message);
           });
       }
 

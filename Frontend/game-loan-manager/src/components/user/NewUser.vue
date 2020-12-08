@@ -118,7 +118,7 @@ export default {
             this.showAlert("error", "Acesso expirado, faça login novamente.");
           } else {
             console.log(err);
-            this.showAlert("error", err.data.message);
+            this.showAlert("error", "Não foi possível registrar o usuário");
           }
         });
     },

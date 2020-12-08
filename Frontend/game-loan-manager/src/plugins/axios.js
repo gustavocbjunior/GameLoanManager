@@ -1,36 +1,64 @@
-import Vue from 'vue'
 import axios from 'axios'
+import router from '../router'
 
-Vue.use({
-    install(Vue) {
-        var hostAPI;
 
-        //desenvolvimento
-        if (process.env.NODE_ENV !== "production") {
-            hostAPI = "http://localhost:5000";
+var hostAPI;
+
+//desenvolvimento
+if (process.env.NODE_ENV !== "production") {
+    hostAPI = "https://localhost:5001";
+}
+//produção
+else {
+    hostAPI = "http://localhost:8000";
+}
+
+axios.defaults.baseURL = hostAPI;
+axios.defaults.headers["Access-Control-Allow-Origin"] = "*";
+axios.defaults.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS, HEAD";
+axios.defaults.headers["Access-Control-Allow-Headers"] = "Access-Control-*, Origin, X-Requested-With, Content-Type, Accept";
+
+var axiosInstance = axios.create({
+    baseURL: hostAPI
+})
+
+
+// Request interceptor for API calls
+axiosInstance.interceptors.request.use(
+    async config => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (user){
+            config.headers = {
+                'Authorization': `Bearer ${user.accessToken}`,
+                'Accept': 'application/json',
+                //'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        } else {
+            router.push('/login');
         }
-        //produção
-        else {
-            hostAPI = "http://localhost:8000";
-        }
-        
-        axios.defaults.baseURL = hostAPI;
-        axios.defaults.headers["Access-Control-Allow-Origin"] = "*";
-        axios.defaults.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS, HEAD";
-        axios.defaults.headers["Access-Control-Allow-Headers"] = "Access-Control-*, Origin, X-Requested-With, Content-Type, Accept";
+        return config;
+    },
+    error => {
+        Promise.reject(error)
+    });
 
-        Vue.prototype.$http = axios.create({
-            baseURL: hostAPI,
-            /*headers: {
-                Autorization: 'Bearer' + localStorage.getItem('token') || ''
-            }*/
-        })
+// Response interceptor for API calls
+axiosInstance.interceptors.response.use((response) => {
+    return response
+}, async function (error) {
+    const originalRequest = error.config;
+    // eslint-disable-next-line
+    console.log(error);
+    if (error.response.status === 401 && !originalRequest._retry) {
+        originalRequest._retry = true;
 
         const user = JSON.parse(localStorage.getItem('user'));
-        //console.log(user);
-        if(user) {
-            //console.log(user.accessToken);
-            Vue.prototype.$http.defaults.headers.common['Authorization'] = 'Bearer ' + user.accessToken
-        }
+
+        const access_token = user.accessToken;
+        axios.defaults.headers.common['Authorization'] = 'Bearer ' + access_token;
+        return axiosInstance(originalRequest);
     }
-})
+    return Promise.reject(error);
+});
+
+export default axiosInstance;

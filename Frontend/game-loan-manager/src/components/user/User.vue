@@ -69,14 +69,14 @@ export default {
       login: "",
       name: "",
       email: "",
-      phone: ""
+      phone: "",
     },
     defaultItem: {
       id: null,
       login: "",
       name: "",
       email: "",
-      phone: ""
+      phone: "",
     },
   }),
 
@@ -108,7 +108,13 @@ export default {
             this.$store.dispatch("logout");
             this.showAlert("error", "Acesso expirado, faça login novamente.");
           } else {
-            this.showAlert("error", err.data.message);
+            var message;
+            try {
+              message = err.data.message;
+            } catch {
+              message = "Não foi possível obter os usuários.";
+            }
+            this.showAlert("error", message);
           }
         });
     },
@@ -153,7 +159,10 @@ export default {
           .catch((error) => {
             // eslint-disable-next-line
             //console.log(error.data.message);
-            this.showAlert("error", error.data.message);
+            var message = error.data.message
+              ? error.data.message
+              : "Não foi possível alterar o usuário.";
+            this.showAlert("error", message);
           });
       } else {
         this.$store
@@ -167,7 +176,10 @@ export default {
           .catch((error) => {
             // eslint-disable-next-line
             //console.log(error.data.message);
-            this.showAlert("error", error.data.message);
+            var message = error.data.message
+              ? error.data.message
+              : "Não foi possível inserir o usuário.";
+            this.showAlert("error", message);
           });
       }
 

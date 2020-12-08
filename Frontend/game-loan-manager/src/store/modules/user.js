@@ -1,5 +1,5 @@
-import Vue from 'vue'
 import router from '../../router'
+import axiosInstance from '../../plugins/axios'
 
 export default {
     state: {
@@ -19,10 +19,10 @@ export default {
     actions: {
         authentication({ commit }, auth) {
             return new Promise((resolve, reject) => {
-                Vue.prototype.$http.post('/api/User/Authentication', auth).then(resp => {
+                axiosInstance.post('/api/User/Authentication', auth).then(resp => {
                     const data = resp.data.data
                     //console.log(data);
-                    if (data.accessToken) {
+                    if (data) {
                         var responseJson = JSON.stringify(data)
                         localStorage.setItem('user', responseJson);
 
@@ -46,7 +46,7 @@ export default {
         },
         getUsers({ commit }) {
             return new Promise((resolve, reject) => {
-                Vue.prototype.$http.get('/api/User').then(resp => {
+                axiosInstance.get('/api/User').then(resp => {
                     const data = resp.data
                     //console.log(data);
                     if (data) {
@@ -64,7 +64,7 @@ export default {
         },
         userRegister({ commit }, user) {
             return new Promise((resolve, reject) => {
-                Vue.prototype.$http.post('/api/User', user).then(resp => {
+                axiosInstance.post('/api/User', user).then(resp => {
                     const data = resp.data
                     console.log(data);
                     if (data) {

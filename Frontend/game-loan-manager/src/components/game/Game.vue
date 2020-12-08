@@ -67,8 +67,8 @@
       <template slot="items" slot-scope="props">
         <td>{{ props.item.id }}</td>
         <td class="text-xs-left">{{ props.item.name }}</td>
-        <td class="text-xs-right">{{ props.item.type }}</td>
-        <td class="text-xs-right">{{ props.item.description }}</td>
+        <td class="text-xs-left">{{ props.item.type }}</td>
+        <td class="text-xs-left">{{ props.item.description }}</td>
         <td class="text-xs-right">
           <v-checkbox
             v-model="props.item.available"
@@ -105,7 +105,7 @@ export default {
       {
         text: "Nome",
         align: "left",
-        sortable: false,
+        sortable: true,
         value: "name",
       },
       { text: "Tipo", value: "type" },
@@ -159,7 +159,14 @@ export default {
             this.$store.dispatch("logout");
             this.showAlert("error", "Acesso expirado, faça login novamente.");
           } else {
-            this.showAlert("error", err.data.message);
+            var message;
+            try {
+              message = err.data.message;
+            } catch {
+              message = "Não foi possível obter os jogos.";
+            }
+
+            this.showAlert("error", message);
           }
         });
     },
@@ -204,7 +211,10 @@ export default {
           .catch((error) => {
             // eslint-disable-next-line
             //console.log(error.data.message);
-            this.showAlert("error", error.data.message);
+            var message = error.data.message
+              ? error.data.message
+              : "Não foi possível alterar o jogo.";
+            this.showAlert("error", message);
           });
       } else {
         this.$store
@@ -218,7 +228,10 @@ export default {
           .catch((error) => {
             // eslint-disable-next-line
             //console.log(error.data.message);
-            this.showAlert("error", error.data.message);
+            var message = error.data.message
+              ? error.data.message
+              : "Não foi possível inserir o jogo.";
+            this.showAlert("error", message);
           });
       }
 

@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import axiosInstance from '../../plugins/axios'
 
 export default {
     state: {
@@ -12,7 +12,7 @@ export default {
     actions: {
         getAPILoanGamers({ commit }) {
             return new Promise((resolve, reject) => {
-                Vue.prototype.$http.get('/api/loanedgame').then(resp => {
+                axiosInstance.get('/api/loanedgame').then(resp => {
                     const data = resp.data
                     //console.log(data);
                     if (data) {
@@ -30,7 +30,7 @@ export default {
         },
         loanGameRegister({ commit }, loanGame) {
             return new Promise((resolve, reject) => {
-                Vue.prototype.$http.post('/api/loanedgame', loanGame).then(resp => {
+                axiosInstance.post('/api/loanedgame', loanGame).then(resp => {
                     const data = resp.data.data
                     // eslint-disable-next-line
                     console.log(data);
@@ -47,7 +47,9 @@ export default {
         },
         loanGameUpdate({ commit }, loanGame) {
             return new Promise((resolve, reject) => {
-                Vue.prototype.$http.put('/api/loanedgame', loanGame).then(resp => {
+                // eslint-disable-next-line
+                console.log(loanGame);
+                axiosInstance.put('/api/loanedgame', loanGame).then(resp => {
                     const data = resp.data.data
                     // eslint-disable-next-line
                     console.log(data);

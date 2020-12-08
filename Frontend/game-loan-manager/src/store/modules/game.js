@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import axiosInstance from '../../plugins/axios'
 
 export default {
     state: {
@@ -12,7 +12,7 @@ export default {
     actions: {
         getAPIGamers({ commit }) {
             return new Promise((resolve, reject) => {
-                Vue.prototype.$http.get('/api/Game').then(resp => {
+                axiosInstance.get('/api/Game').then(resp => {
                     const data = resp.data
                     //console.log(data);
                     if (data) {
@@ -30,7 +30,7 @@ export default {
         },
         gameRegister({ commit }, game) {
             return new Promise((resolve, reject) => {
-                Vue.prototype.$http.post('/api/Game', game).then(resp => {
+                axiosInstance.$http.post('/api/Game', game).then(resp => {
                     const data = resp.data.data
                     // eslint-disable-next-line
                     console.log(data);
@@ -47,7 +47,7 @@ export default {
         },
         gameUpdate({ commit }, game) {
             return new Promise((resolve, reject) => {
-                Vue.prototype.$http.put('/api/Game', game).then(resp => {
+                axiosInstance.$http.put('/api/Game', game).then(resp => {
                     const data = resp.data.data
                     // eslint-disable-next-line
                     console.log(data);
