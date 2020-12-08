@@ -6,7 +6,7 @@ namespace GameLoanManager.Domain.ViewModels.Game
 {
     public class GameViewModel
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
         public string Name { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
