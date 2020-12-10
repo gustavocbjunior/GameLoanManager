@@ -32,19 +32,13 @@ namespace GameLoanManager.API.Controllers
                     Message = "Login ou senha inválidos"
                 });
 
-            try
-            {
-                var result = await _service.Authentication(model);
+            var result = await _service.Authentication(model);
 
-                if (result.Success)
-                    return result;
-                else
-                    return NotFound(result);
-            }
-            catch (Exception e)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
-            }
+            if (result.Success)
+                return result;
+            else
+                return NotFound(result);
+
         }
 
         [AllowAnonymous]
@@ -59,16 +53,9 @@ namespace GameLoanManager.API.Controllers
                     Data = model.Notifications
                 });
 
-            try
-            {
-                var result = await _service.Post(model);
+            var result = await _service.Post(model);
 
-                return Ok(result);
-            }
-            catch (Exception e)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, e);
-            }
+            return Ok(result);
         }
 
         [Authorize("Authorization")]
@@ -83,15 +70,10 @@ namespace GameLoanManager.API.Controllers
                     Data = model.Notifications
                 });
 
-            try
-            {
-                var result = await _service.Put(model);
-                return Ok(result);
-            }
-            catch (ArgumentException e)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
-            }
+            var result = await _service.Put(model);
+
+            return Ok(result);
+
         }
 
         [Authorize("Authorization")]
@@ -99,28 +81,14 @@ namespace GameLoanManager.API.Controllers
         [Route("{id}")]
         public async Task<ActionResult> Delete(long id)
         {
-            try
-            {
-                return Ok(await _service.Delete(id));
-            }
-            catch (ArgumentException e)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
-            }
+            return Ok(await _service.Delete(id));
         }
 
         [Authorize("Authorization")]
         [HttpGet]
         public async Task<ActionResult> GetAll()
         {
-            try
-            {
-                return Ok(await _service.GetAll());
-            }
-            catch (Exception e)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
-            }
+            return Ok(await _service.GetAll());
         }
 
         [Authorize("Authorization")]
@@ -128,14 +96,7 @@ namespace GameLoanManager.API.Controllers
         [Route("{id}")]
         public async Task<ActionResult> Get(long id)
         {
-            try
-            {
-                return Ok(await _service.Get(id));
-            }
-            catch (ArgumentException e)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
-            }
+            return Ok(await _service.Get(id));
         }
 
         //[Authorize("Authorization")]
@@ -143,14 +104,7 @@ namespace GameLoanManager.API.Controllers
         [Route("{id}/mygames")]
         public async Task<ActionResult> GetMyGames(long id)
         {
-            try
-            {
-                return Ok(await _service.GetMyGames(id));
-            }
-            catch (ArgumentException e)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
-            }
+            return Ok(await _service.GetMyGames(id));
         }
     }
 }

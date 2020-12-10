@@ -3,6 +3,7 @@ using System.Text;
 using GameLoanManager.Data;
 using GameLoanManager.Domain.Security;
 using GameLoanManager.Helpers.DependencyInjection;
+using GameLoanManager.Helpers.Extensions;
 using GameLoanManager.Helpers.Mapping;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -53,6 +54,8 @@ namespace GameLoanManager.API
                 o.SerializerSettings.Converters.Add(new StringEnumConverter());
             }
             );
+
+            services.ConfigureProblemDetailsModelState();
 
             ServicesConfiguration.ConfigureDependencies(services);
             RepositoriesConfiguration.ConfigureDependencies(services);
@@ -162,6 +165,8 @@ namespace GameLoanManager.API
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseProblemDetailsExceptionHandler(env.IsDevelopment());
 
             app.UseEndpoints(endpoints =>
             {

@@ -29,14 +29,7 @@ namespace GameLoanManager.API.Controllers
         [HttpGet]
         public async Task<ActionResult> GetAll()
         {
-            try
-            {
-                return Ok(await _service.GetAll());
-            }
-            catch (Exception e)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
-            }
+            return Ok(await _service.GetAll());
         }
 
         [Authorize("Authorization")]
@@ -44,14 +37,7 @@ namespace GameLoanManager.API.Controllers
         [Route("{id}")]
         public async Task<ActionResult> Get(long id)
         {
-            try
-            {
-                return Ok(await _service.Get(id));
-            }
-            catch (ArgumentException e)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
-            }
+            return Ok(await _service.Get(id));
         }
 
         [Authorize("Authorization")]
@@ -59,14 +45,7 @@ namespace GameLoanManager.API.Controllers
         [Route("owner")]
         public async Task<ActionResult> GetAllWithRelationships()
         {
-            try
-            {
-                return Ok(await _service.GetAllWithRelationships());
-            }
-            catch (Exception e)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
-            }
+            return Ok(await _service.GetAllWithRelationships());
         }
 
         [Authorize("Authorization")]
@@ -74,14 +53,7 @@ namespace GameLoanManager.API.Controllers
         [Route("{id}/owner")]
         public async Task<ActionResult> GetByIdWithRelationships(long id)
         {
-            try
-            {
-                return Ok(await _service.GetByIdWithRelationships(id));
-            }
-            catch (ArgumentException e)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
-            }
+            return Ok(await _service.GetByIdWithRelationships(id));
         }
 
         [Authorize("Authorization")]
@@ -94,14 +66,7 @@ namespace GameLoanManager.API.Controllers
         /// <returns></returns>
         public async Task<ActionResult> GetByIdUser(long idUser)
         {
-            try
-            {
-                return Ok(await _service.GetByIdUser(idUser));
-            }
-            catch (ArgumentException e)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
-            }
+            return Ok(await _service.GetByIdUser(idUser));
         }
 
         [Authorize("Authorization")]
@@ -123,16 +88,9 @@ namespace GameLoanManager.API.Controllers
                     Data = model.Notifications
                 });
 
-            try
-            {
-                var result = await _service.Post(model);
+            var result = await _service.Post(model);
 
-                return Ok(result);
-            }
-            catch (Exception e)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
-            }
+            return Ok(result);
         }
 
         [Authorize("Authorization")]
@@ -145,7 +103,7 @@ namespace GameLoanManager.API.Controllers
                 var user = await _serviceUser.GetByName(authenticatedUserName);
                 model.IdOwner = user.Id;
             }
-            
+
             if (model.Invalid)
                 return BadRequest(new ResultViewModel
                 {
@@ -154,15 +112,9 @@ namespace GameLoanManager.API.Controllers
                     Data = model.Notifications
                 });
 
-            try
-            {
-                var result = await _service.Put(model);
-                return Ok(result);
-            }
-            catch (ArgumentException e)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
-            }
+            var result = await _service.Put(model);
+
+            return Ok(result);
         }
 
         [Authorize("Authorization")]
@@ -170,14 +122,7 @@ namespace GameLoanManager.API.Controllers
         [Route("{id}")]
         public async Task<ActionResult> Delete(long id)
         {
-            try
-            {
-                return Ok(await _service.Delete(id));
-            }
-            catch (ArgumentException e)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
-            }
+            return Ok(await _service.Delete(id));
         }
     }
 }
